@@ -33,9 +33,14 @@ export const useFetchDocuments = (docCollection, search = null, uid = null) => {
         let q 
 
         if(search) {
-            q = await query(collectionRef, where("tags", "array-contains", search), orderBy("createdAt", "desc"));
-        } else {
-            q = await query(collectionRef, orderBy("createdAt", "desc"));
+          q = await query(collectionRef, where("tagsArray", "array-contains", search), orderBy("createdAt", "desc"));
+        } else if(uid) {
+          q = await query(collectionRef, where("uid", "==", uid), orderBy("createdAt", "desc"));
+          /* Se olhar no firebase vai ver que o id do usuário e do post são diferentes
+          por isso é bom fazer essa verificação */
+        } 
+        else {
+          q = await query(collectionRef, orderBy("createdAt", "desc"));
         }
 
         await onSnapshot(q, (querySnapshot) => {
